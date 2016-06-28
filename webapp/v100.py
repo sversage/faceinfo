@@ -10,9 +10,9 @@ def root():
     return VERSION_STR
 
 
-@blueprint.route('/info')
-def info():
-    return VERSION_STR + '/info'
+@blueprint.route('/description')
+def description():
+    return VERSION_STR + '/description'
 
 
 from app import app
