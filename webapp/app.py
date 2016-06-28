@@ -7,4 +7,5 @@ def root():
     return 'hello world!'
 
 
+import vmock
 import v100
