@@ -20,7 +20,7 @@ todo
 
 ### Dependencies
 
-todo... python, flask, flask\_swagger, opencv, peferably linux or osx
+todo... python, flask, flask\_swagger, swagger-codegen, opencv, peferably linux or osx
 
 ### Launching
 

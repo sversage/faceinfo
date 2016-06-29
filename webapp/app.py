@@ -9,8 +9,8 @@ def root():
     return 'hello world!'
 
 
-@app.route('/docs')
-def docs():
+@app.route('/spec')
+def spec():
     return jsonify(swagger(app))
 
 
