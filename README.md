@@ -1,4 +1,4 @@
-# Face Info RESTful API
+# FaceInfo REST API
 
 ## Overview
 
