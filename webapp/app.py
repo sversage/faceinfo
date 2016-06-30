@@ -1,4 +1,6 @@
-from flask import Flask, jsonify
+import time
+
+from flask import Flask, jsonify, g, request
 from flask_swagger import swagger
 
 app = Flask(__name__)
@@ -26,6 +28,16 @@ def status():
         description: A array of keys that should be excluded from the response
         required: false
         type: array
+      - name: request_interval
+        in: query
+        description: The number of recent requests to include when calculating 'avg_response_time'
+        required: false
+        type: integer
+      - name: time_interval
+        in: query
+        description: The number of seconds of recent activity to include when calculating 'num_requests'
+        required: false
+        type: integer
 
     responses:
       200:
@@ -45,17 +57,14 @@ def status():
             - service_name
           properties:
             uptime:
-              type: number
-              format: integer
+              type: integer
               description: the number of seconds this service has been running
             num_requests:
-              type: number
-              format: integer
-              description: the number of requests this service has received
+              type: integer
+              description: the number of requests this service has received in the last 'time_interval' number of seconds
             avg_response_time:
               type: number
-              format: double
-              description: the average time in microseconds that it takes to generate a response
+              description: the average time in milliseconds that it took to generate the last 'request_interval' responses
             service_name:
               type: string
               description: the name of this service
@@ -67,13 +76,26 @@ def status():
             - message
           properties:
             code:
-              type: number
-              format: integer
+              type: integer
             message:
               type: string
               description: the human readable description of this error's error code
     '''
     return 'hello world!'
+
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+
+@app.after_request
+def after_request(response):
+    diff = time.time() - g.start_time
+    diff *= 1000.0  # to convert from seconds to milliseconds
+    info = '%.4f ms <-- %s' % (diff, request.path)
+    app.logger.info(info)
+    return response
 
 
 @app.route('/spec')
