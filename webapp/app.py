@@ -8,6 +8,8 @@ app = Flask(__name__)
 
 APP_NAME = 'FaceInfo REST API'
 
+APP_DESCRIPTION = 'Find faces in images and get facial info with this easy REST API.'
+
 
 class Error(Exception):
 
@@ -42,12 +44,21 @@ def root():
 def status():
     '''
     Get current status
-
     This endpoint provides a remote way to monitor this service
     and get status information about how well it is running.
     ---
     tags:
-      - Miscellaneous
+      - miscellaneous
+
+    responses:
+      200:
+        description: A status info object
+        schema:
+          $ref: '#/definitions/StatusInfo'
+      default:
+        description: Unexpected error
+        schema:
+          $ref: '#/definitions/Error'
 
     parameters:
       - name: include_keys
@@ -70,16 +81,6 @@ def status():
         description: The number of seconds of recent activity to include when calculating 'num_requests' (default=60)
         required: false
         type: integer
-
-    responses:
-      200:
-        description: A status info object
-        schema:
-          $ref: '#/definitions/StatusInfo'
-      default:
-        description: Unexpected error
-        schema:
-          $ref: '#/definitions/Error'
 
     definitions:
       - schema:
@@ -147,6 +148,7 @@ def spec():
     swag = swagger(app)
     swag['info']['version'] = "multiple"
     swag['info']['title'] = APP_NAME
+    swag['info']['description'] = APP_DESCRIPTION
     return jsonify(swag)
 
 
