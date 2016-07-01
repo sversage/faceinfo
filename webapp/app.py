@@ -9,6 +9,28 @@ app = Flask(__name__)
 APP_NAME = 'FaceInfo REST API'
 
 
+class Error(object):
+
+    def __init__(self, code, message, http_status=400):
+        self.code = code
+        self.message = message
+        self.http_status = http_status
+
+    def response(self):
+        error_dict = {'code': self.code, 'message': self.message}
+        return make_response(jsonify(error_dict), self.http_status)
+
+
+@app.errorhandler(Error)
+def error_raised(error):
+    return error.response()
+
+
+@app.errorhandler(404)
+def not_found(_):
+    return Error(404, 'Resource not found', 404).response()
+
+
 @app.route('/')
 def root():
     return redirect('./static/swagger-ui-build/index.html')
