@@ -9,7 +9,7 @@ app = Flask(__name__)
 APP_NAME = 'FaceInfo REST API'
 
 
-class Error(object):
+class Error(Exception):
 
     def __init__(self, code, message, http_status=400):
         self.code = code
@@ -18,7 +18,9 @@ class Error(object):
 
     def response(self):
         error_dict = {'code': self.code, 'message': self.message}
-        return make_response(jsonify(error_dict), self.http_status)
+        response = jsonify(error_dict)
+        response.status_code = self.http_status
+        return response
 
 
 @app.errorhandler(Error)
