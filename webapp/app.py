@@ -1,9 +1,17 @@
 import time
 
-from flask import Flask, jsonify, g, request
+from flask import Flask, jsonify, g, request, redirect
 from flask_swagger import swagger
 
 app = Flask(__name__)
+
+
+APP_NAME = 'FaceInfo REST API'
+
+
+@app.route('/')
+def root():
+    return redirect('./static/swagger-ui-build/index.html')
 
 
 @app.route('/status')
@@ -30,12 +38,12 @@ def status():
         type: array
       - name: request_interval
         in: query
-        description: The number of recent requests to include when calculating 'avg_response_time'
+        description: The number of recent requests to include when calculating 'avg_response_time' (default=100)
         required: false
         type: integer
       - name: time_interval
         in: query
-        description: The number of seconds of recent activity to include when calculating 'num_requests'
+        description: The number of seconds of recent activity to include when calculating 'num_requests' (default=60)
         required: false
         type: integer
 
@@ -81,7 +89,19 @@ def status():
               type: string
               description: the human readable description of this error's error code
     '''
-    return 'hello world!'
+    # TODO: actually provide real functions that do real stuff...
+    info = {'avg_response_time': lambda: -1.0,
+            'num_requests': lambda: -1,
+            'service_name': lambda: APP_NAME,
+            'uptime': lambda: -1
+           }
+    include_keys = request.args.get('include_keys', info.keys())
+    exclude_keys = request.args.get('exclude_keys', [])
+    request_interval = request.args.get('request_interval', 100)
+    time_interval = request.args.get('time_interval', 60)
+    keys = (set(info.keys()) & set(include_keys)) - set(exclude_keys)
+    res = {k: info[k]() for k in keys}
+    return jsonify(res)
 
 
 @app.before_request
@@ -101,8 +121,8 @@ def after_request(response):
 @app.route('/spec')
 def spec():
     swag = swagger(app)
-    swag['info']['version'] = "1.0.0"
-    swag['info']['title'] = "FaceInfo REST API"
+    swag['info']['version'] = "multiple"
+    swag['info']['title'] = APP_NAME
     return jsonify(swag)
 
 
