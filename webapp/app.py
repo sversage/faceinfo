@@ -28,12 +28,12 @@ def status():
     parameters:
       - name: include_keys
         in: query
-        description: A array of the keys that should be included in the response
+        description: A array of the keys that should be included in the response (default is all keys)
         required: false
         type: array
       - name: exclude_keys
         in: query
-        description: A array of keys that should be excluded from the response
+        description: A array of keys that should be excluded from the response (default is no keys)
         required: false
         type: array
       - name: request_interval
@@ -95,8 +95,8 @@ def status():
             'service_name': lambda: APP_NAME,
             'uptime': lambda: -1
            }
-    include_keys = request.args.get('include_keys', info.keys())
-    exclude_keys = request.args.get('exclude_keys', [])
+    include_keys = request.args.get('include_keys', ','.join(info.keys())).split(',')
+    exclude_keys = request.args.get('exclude_keys', '').split(',')
     request_interval = request.args.get('request_interval', 100)
     time_interval = request.args.get('time_interval', 60)
     keys = (set(info.keys()) & set(include_keys)) - set(exclude_keys)
