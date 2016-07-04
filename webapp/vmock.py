@@ -66,6 +66,10 @@ def process_face():
             process_time:
               type: number
               description: the processing time in milliseconds taken to build this object
+            annotated_image:
+              type: string
+              format: byte
+              description: base64 encoded annotated image of this face
       - schema:
           id: EyeInfo
           type: object
@@ -84,6 +88,10 @@ def process_face():
             process_time:
               type: number
               description: the processing time in milliseconds taken to build this object
+            annotated_image:
+              type: string
+              format: byte
+              description: base64 encoded annotated image of this eye
       - schema:
           id: Rect
           type: object
@@ -119,9 +127,9 @@ def find_faces():
 
     responses:
       200:
-        description: An array of face info objects
+        description: An image info objects
         schema:
-          $ref: '#/definitions/FaceInfoArray'
+          $ref: '#/definitions/ImageInfo'
       default:
         description: Unexpected error
         schema:
@@ -141,10 +149,21 @@ def find_faces():
 
     definitions:
       - schema:
-          id: FaceInfoArray
-          type: array
-          items:
-            $ref: '#/definitions/FaceInfo'
+          id: ImageInfo
+          type: object
+          required:
+            - faces
+          properties:
+            faces:
+              description: an array of FaceInfo objects found in this image
+              schema:
+                type: array
+                items:
+                  $ref: '#/definitions/FaceInfo'
+            annotated_image:
+              type: string
+              format: byte
+              description: base64 encoded annotated image
     '''
     return VERSION_STR
 
