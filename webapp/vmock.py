@@ -112,9 +112,7 @@ def find_faces():
       200:
         description: An array of face info objects
         schema:
-          type: array
-          items:
-            $ref: '#/definitions/FaceInfo'
+          $ref: '#/definitions/FaceInfoArray'
       default:
         description: Unexpected error
         schema:
@@ -126,6 +124,13 @@ def find_faces():
         description: The URL to the image that should be processed
         required: true
         type: string
+
+    definitions:
+      - schema:
+          id: FaceInfoArray
+          type: array
+          items:
+            $ref: '#/definitions/FaceInfo'
     '''
     return VERSION_STR
 
