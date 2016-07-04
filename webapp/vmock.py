@@ -17,9 +17,9 @@ mock_faces  = [util.read_file_in_base64('mocks/face1.jpg'),
                util.read_file_in_base64('mocks/face2.jpg'),
                util.read_file_in_base64('mocks/face3.jpg')]
 
-mock_images = [util.read_file_in_base64('mocks/image1.jpg'),
-               util.read_file_in_base64('mocks/image2.JPG'),
-               util.read_file_in_base64('mocks/image3.jpg')]
+mock_photos = [util.read_file_in_base64('mocks/photo1.jpg'),
+               util.read_file_in_base64('mocks/photo2.JPG'),
+               util.read_file_in_base64('mocks/photo3.jpg')]
 
 
 def gen_rand_Rect_object():
@@ -54,7 +54,7 @@ def gen_rand_FaceInfo_object(annotate_image):
 def gen_rand_PhotoInfo_object(annotate_image):
     photoinfo = {}
     if annotate_image:
-        photoinfo['annotated_image'] = random.choice(mock_images)
+        photoinfo['annotated_image'] = random.choice(mock_photos)
     photoinfo['faces'] = [gen_rand_FaceInfo_object(annotate_image) \
                               for i in range(random.randint(1, 5))]
     return photoinfo
@@ -184,7 +184,7 @@ def process_photo():
 
     responses:
       200:
-        description: An image info objects
+        description: A photo info objects
         schema:
           $ref: '#/definitions/PhotoInfo'
       default:
