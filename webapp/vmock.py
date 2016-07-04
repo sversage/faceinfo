@@ -51,13 +51,13 @@ def gen_rand_FaceInfo_object(annotate_image):
     return faceinfo
 
 
-def gen_rand_ImageInfo_object(annotate_image):
-    imageinfo = {}
+def gen_rand_PhotoInfo_object(annotate_image):
+    photoinfo = {}
     if annotate_image:
-        imageinfo['annotated_image'] = random.choice(mock_images)
-    imageinfo['faces'] = [gen_rand_FaceInfo_object(annotate_image) \
+        photoinfo['annotated_image'] = random.choice(mock_images)
+    photoinfo['faces'] = [gen_rand_FaceInfo_object(annotate_image) \
                               for i in range(random.randint(1, 5))]
-    return imageinfo
+    return photoinfo
 
 
 @blueprint.route('/process_face')
@@ -67,7 +67,7 @@ def process_face():
     Process a cropped image of a face and return info about the face.
     Note: This endpoint does NOT find faces in the image. Rather, it
     assumes the given image contains exactly one pre-cropped face.
-    Use `find_faces` to locate and process faces within an image.
+    Use `process_photo` to locate and process faces within an image.
     ---
     tags:
       - vmock
@@ -170,10 +170,10 @@ def process_face():
     return jsonify(gen_rand_FaceInfo_object(annotate_image))
 
 
-@blueprint.route('/find_faces')
-def find_faces():
+@blueprint.route('/process_photo')
+def process_photo():
     '''
-    Find and process faces in an image
+    Find and process faces in a photo
     Find faces and provide facial info of the given image.
     Note: If you use this endpoint to find faces, you do NOT need to use
     `process_face` because this endpoint also processes the faces that
@@ -186,7 +186,7 @@ def find_faces():
       200:
         description: An image info objects
         schema:
-          $ref: '#/definitions/ImageInfo'
+          $ref: '#/definitions/PhotoInfo'
       default:
         description: Unexpected error
         schema:
@@ -206,7 +206,7 @@ def find_faces():
 
     definitions:
       - schema:
-          id: ImageInfo
+          id: PhotoInfo
           type: object
           required:
             - faces
@@ -226,7 +226,7 @@ def find_faces():
         raise Error(24723, 'You must supply the `image_url` parameter')
     image_url = request.args['image_url']  # <-- unused in this mock impl
     annotate_image = (request.args.get('annotate_image', 'false').lower() == 'true')
-    return jsonify(gen_rand_ImageInfo_object(annotate_image))
+    return jsonify(gen_rand_PhotoInfo_object(annotate_image))
 
 
 from app import app
