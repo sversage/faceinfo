@@ -3,6 +3,8 @@ VERSION_STR = 'vmock'
 
 import util
 import random
+import requests
+import numpy as np
 from error import Error
 from flask import Blueprint, request, jsonify
 
@@ -60,6 +62,30 @@ def gen_rand_PhotoInfo_object(annotate_image):
     return photoinfo
 
 
+def obtain_encoded_image(request):
+    '''
+    All three routes below pass the image in the same way as one another.
+    This function attempts to obtain the image, or it throws an error
+    if the image cannot be obtained.
+    '''
+
+    if 'image_url' not in request.args:
+        raise Error(387523, 'You must supply the `image_url` parameter')
+
+    image_url = request.args['image_url']
+
+    if image_url == 'body':
+        encoded_image_str = request.data
+    else:
+        try:
+            response = requests.get(image_url)
+            encoded_image_str = response.content
+        except:
+            raise Error(2873, 'Invalid `image_url` parameter')
+
+    return np.fromstring(encoded_image_str, dtype=np.uint8)
+
+
 @blueprint.route('/process_eye')
 def process_eye():
     '''
@@ -102,6 +128,9 @@ def process_eye():
         required: false
         type: boolean
 
+    consumes:
+      - application/octet-stream
+
     definitions:
       - schema:
           id: EyeInfo
@@ -143,9 +172,7 @@ def process_eye():
             height:
               type: number
     '''
-    if 'image_url' not in request.args:
-        raise Error(387523, 'You must supply the `image_url` parameter')
-    image_url = request.args['image_url']  # <-- unused in this mock impl
+    encoded_image = obtain_encoded_image(request)
     annotate_image = (request.args.get('annotate_image', 'false').lower() == 'true')
     return jsonify(gen_rand_EyeInfo_object(annotate_image))
 
@@ -193,6 +220,9 @@ def process_face():
         required: false
         type: boolean
 
+    consumes:
+      - application/octet-stream
+
     definitions:
       - schema:
           id: FaceInfo
@@ -223,9 +253,7 @@ def process_face():
               format: byte
               description: base64 encoded annotated image of this face
     '''
-    if 'image_url' not in request.args:
-        raise Error(25724, 'You must supply the `image_url` parameter')
-    image_url = request.args['image_url']  # <-- unused in this mock impl
+    encoded_image = obtain_encoded_image(request)
     annotate_image = (request.args.get('annotate_image', 'false').lower() == 'true')
     return jsonify(gen_rand_FaceInfo_object(annotate_image))
 
@@ -271,6 +299,9 @@ def process_photo():
         required: false
         type: boolean
 
+    consumes:
+      - application/octet-stream
+
     definitions:
       - schema:
           id: PhotoInfo
@@ -289,9 +320,7 @@ def process_photo():
               format: byte
               description: base64 encoded annotated image
     '''
-    if 'image_url' not in request.args:
-        raise Error(24723, 'You must supply the `image_url` parameter')
-    image_url = request.args['image_url']  # <-- unused in this mock impl
+    encoded_image = obtain_encoded_image(request)
     annotate_image = (request.args.get('annotate_image', 'false').lower() == 'true')
     return jsonify(gen_rand_PhotoInfo_object(annotate_image))
 
