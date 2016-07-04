@@ -83,10 +83,13 @@ def obtain_encoded_image(request):
         except:
             raise Error(2873, 'Invalid `image_url` parameter')
 
+    if encoded_image_str == '':
+        raise Error(5724, 'You must supply a non-empty input image')
+
     return np.fromstring(encoded_image_str, dtype=np.uint8)
 
 
-@blueprint.route('/process_eye')
+@blueprint.route('/process_eye', methods=['POST'])
 def process_eye():
     '''
     Process one eye
@@ -177,7 +180,7 @@ def process_eye():
     return jsonify(gen_rand_EyeInfo_object(annotate_image))
 
 
-@blueprint.route('/process_face')
+@blueprint.route('/process_face', methods=['POST'])
 def process_face():
     '''
     Process one face
@@ -258,7 +261,7 @@ def process_face():
     return jsonify(gen_rand_FaceInfo_object(annotate_image))
 
 
-@blueprint.route('/process_photo')
+@blueprint.route('/process_photo', methods=['POST'])
 def process_photo():
     '''
     Find and process faces and eyes in a photo
