@@ -56,8 +56,91 @@ def gen_rand_PhotoInfo_object(annotate_image):
     if annotate_image:
         photoinfo['annotated_image'] = random.choice(mock_photos)
     photoinfo['faces'] = [gen_rand_FaceInfo_object(annotate_image) \
-                              for i in range(random.randint(1, 5))]
+                              for i in range(random.randint(0, 5))]
     return photoinfo
+
+
+@blueprint.route('/process_eye')
+def process_eye():
+    '''
+    Process one eye
+    Process a cropped image of an eye and return info about the eye.
+    Note: This endpoint does NOT find faces or eyes in the image. Rather, it
+    assumes the given image contains exactly one pre-cropped eye.
+    Alternatively, use `process_photo` to locate and process faces and eyes
+    within an image.
+    ---
+    tags:
+      - vmock
+
+    responses:
+      200:
+        description: A eye info object
+        schema:
+          $ref: '#/definitions/EyeInfo'
+      default:
+        description: Unexpected error
+        schema:
+          $ref: '#/definitions/Error'
+
+    parameters:
+      - name: image_url
+        in: query
+        description: The URL to the image that should be processed
+        required: true
+        type: string
+      - name: annotate_image
+        in: query
+        description: A boolean input flag (default=false) indicating whether or not to build and return annotated images within the `annotated_image` field of each response object
+        required: false
+        type: boolean
+
+    definitions:
+      - schema:
+          id: EyeInfo
+          type: object
+          required:
+            - rect
+            - leuko_prob
+            - process_time
+          properties:
+            rect:
+              description: This eye's rectangle within the image
+              schema:
+                $ref: '#/definitions/Rect'
+            leuko_prob:
+              type: number
+              description: The probability of leukocoria in this eye (in [0, 1])
+            process_time:
+              type: number
+              description: the processing time in milliseconds taken to build this object
+            annotated_image:
+              type: string
+              format: byte
+              description: base64 encoded annotated image of this eye
+      - schema:
+          id: Rect
+          type: object
+          required:
+            - x
+            - y
+            - width
+            - height
+          properties:
+            x:
+              type: number
+            y:
+              type: number
+            width:
+              type: number
+            height:
+              type: number
+    '''
+    if 'image_url' not in request.args:
+        raise Error(387523, 'You must supply the `image_url` parameter')
+    image_url = request.args['image_url']  # <-- unused in this mock impl
+    annotate_image = (request.args.get('annotate_image', 'false').lower() == 'true')
+    return jsonify(gen_rand_EyeInfo_object(annotate_image))
 
 
 @blueprint.route('/process_face')
@@ -67,7 +150,9 @@ def process_face():
     Process a cropped image of a face and return info about the face.
     Note: This endpoint does NOT find faces in the image. Rather, it
     assumes the given image contains exactly one pre-cropped face.
-    Use `process_photo` to locate and process faces within an image.
+    This endpoint also finds and processes eyes, so you do NOT need to call
+    `process_eye` when using this endpoint. Alternatively, use `process_photo`
+    to locate and process faces within an image.
     ---
     tags:
       - vmock
@@ -123,45 +208,6 @@ def process_face():
               type: string
               format: byte
               description: base64 encoded annotated image of this face
-      - schema:
-          id: EyeInfo
-          type: object
-          required:
-            - rect
-            - leuko_prob
-            - process_time
-          properties:
-            rect:
-              description: This eye's rectangle within the image
-              schema:
-                $ref: '#/definitions/Rect'
-            leuko_prob:
-              type: number
-              description: The probability of leukocoria in this eye (in [0, 1])
-            process_time:
-              type: number
-              description: the processing time in milliseconds taken to build this object
-            annotated_image:
-              type: string
-              format: byte
-              description: base64 encoded annotated image of this eye
-      - schema:
-          id: Rect
-          type: object
-          required:
-            - x
-            - y
-            - width
-            - height
-          properties:
-            x:
-              type: number
-            y:
-              type: number
-            width:
-              type: number
-            height:
-              type: number
     '''
     if 'image_url' not in request.args:
         raise Error(25724, 'You must supply the `image_url` parameter')
@@ -173,11 +219,11 @@ def process_face():
 @blueprint.route('/process_photo')
 def process_photo():
     '''
-    Find and process faces in a photo
-    Find faces and provide facial info of the given image.
+    Find and process faces and eyes in a photo
+    Find faces and eyes, and provide facial info of the given image.
     Note: If you use this endpoint to find faces, you do NOT need to use
-    `process_face` because this endpoint also processes the faces that
-    are found.
+    `process_face` or `process_eye` because this endpoint also processes
+    the faces and eyes that are found.
     ---
     tags:
       - vmock
