@@ -14,6 +14,7 @@ def process_face():
     Process a cropped image of a face and return info about the face.
     Note: This endpoint does NOT find faces in the image. Rather, it
     assumes the given image contains exactly one pre-cropped face.
+    Use `find_faces` to locate and process faces within an image.
     ---
     tags:
       - vmock
@@ -34,6 +35,11 @@ def process_face():
         description: The URL to the image that should be processed
         required: true
         type: string
+      - name: annotate_image
+        in: query
+        description: A boolean input flag (default=false) indicating whether or not to build and return annotated images within the `annotated_image` field of each response object
+        required: false
+        type: boolean
 
     definitions:
       - schema:
@@ -104,6 +110,9 @@ def find_faces():
     '''
     Find and process faces in an image
     Find faces and provide facial info of the given image.
+    Note: If you use this endpoint to find faces, you do NOT need to use
+    `process_face` because this endpoint also processes the faces that
+    are found.
     ---
     tags:
       - vmock
@@ -124,6 +133,11 @@ def find_faces():
         description: The URL to the image that should be processed
         required: true
         type: string
+      - name: annotate_image
+        in: query
+        description: A boolean input flag (default=false) indicating whether or not to build and return annotated images within the `annotated_image` field of each response object
+        required: false
+        type: boolean
 
     definitions:
       - schema:
