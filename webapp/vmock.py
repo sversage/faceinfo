@@ -1,7 +1,7 @@
 VERSION_STR = 'vmock'
 
 
-from app import Error
+from error import Error
 from flask import Blueprint
 
 blueprint = Blueprint(VERSION_STR, __name__)
