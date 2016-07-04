@@ -1,6 +1,7 @@
 VERSION_STR = 'admin'
 
 
+from app import APP_NAME
 from error import Error
 from flask import Blueprint, redirect, jsonify, request
 
