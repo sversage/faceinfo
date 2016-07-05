@@ -115,16 +115,14 @@ def process_eye():
     parameters:
       - name: image_url
         in: query
-        description: The URL of the image that should be processed, or the string 'body' if the image that should be processed is included in the body of this request (see `image_contents`)
-        required: true
-        type: string
-      - name: image_contents
-        in: body
-        description: A binary dump of the image that should be processed. This is used when you need to upload an image for processing rather than specifying the URL of an existing image. If you want to upload an image for processing via the body of this request, you must pass the string 'body' to the parameter `image_url`.
+        description: The URL of an image that should be processed. If this field is not specified, you must pass an image via the `image_buf` form parameter.
         required: false
-        schema:
-          type: string
-          format: binary
+        type: string
+      - name: image_buf
+        in: formData
+        description: An image that should be processed. This is used when you need to upload an image for processing rather than specifying the URL of an existing image. If this field is not specified, you must pass an image URL via the `image_url` parameter.
+        required: false
+        type: file
       - name: annotate_image
         in: query
         description: A boolean input flag (default=false) indicating whether or not to build and return annotated images within the `annotated_image` field of each response object
@@ -132,7 +130,8 @@ def process_eye():
         type: boolean
 
     consumes:
-      - application/octet-stream
+      - multipart/form-data
+      - application/x-www-form-urlencoded
 
     definitions:
       - schema:
@@ -207,16 +206,14 @@ def process_face():
     parameters:
       - name: image_url
         in: query
-        description: The URL of the image that should be processed, or the string 'body' if the image that should be processed is included in the body of this request (see `image_contents`)
-        required: true
-        type: string
-      - name: image_contents
-        in: body
-        description: A binary dump of the image that should be processed. This is used when you need to upload an image for processing rather than specifying the URL of an existing image. If you want to upload an image for processing via the body of this request, you must pass the string 'body' to the parameter `image_url`.
+        description: The URL of an image that should be processed. If this field is not specified, you must pass an image via the `image_buf` form parameter.
         required: false
-        schema:
-          type: string
-          format: binary
+        type: string
+      - name: image_buf
+        in: formData
+        description: An image that should be processed. This is used when you need to upload an image for processing rather than specifying the URL of an existing image. If this field is not specified, you must pass an image URL via the `image_url` parameter.
+        required: false
+        type: file
       - name: annotate_image
         in: query
         description: A boolean input flag (default=false) indicating whether or not to build and return annotated images within the `annotated_image` field of each response object
@@ -224,7 +221,8 @@ def process_face():
         type: boolean
 
     consumes:
-      - application/octet-stream
+      - multipart/form-data
+      - application/x-www-form-urlencoded
 
     definitions:
       - schema:
@@ -286,16 +284,14 @@ def process_photo():
     parameters:
       - name: image_url
         in: query
-        description: The URL of the image that should be processed, or the string 'body' if the image that should be processed is included in the body of this request (see `image_contents`)
-        required: true
-        type: string
-      - name: image_contents
-        in: body
-        description: A binary dump of the image that should be processed. This is used when you need to upload an image for processing rather than specifying the URL of an existing image. If you want to upload an image for processing via the body of this request, you must pass the string 'body' to the parameter `image_url`.
+        description: The URL of an image that should be processed. If this field is not specified, you must pass an image via the `image_buf` form parameter.
         required: false
-        schema:
-          type: string
-          format: binary
+        type: string
+      - name: image_buf
+        in: formData
+        description: An image that should be processed. This is used when you need to upload an image for processing rather than specifying the URL of an existing image. If this field is not specified, you must pass an image URL via the `image_url` parameter.
+        required: false
+        type: file
       - name: annotate_image
         in: query
         description: A boolean input flag (default=false) indicating whether or not to build and return annotated images within the `annotated_image` field of each response object
@@ -303,7 +299,8 @@ def process_photo():
         type: boolean
 
     consumes:
-      - application/octet-stream
+      - multipart/form-data
+      - application/x-www-form-urlencoded
 
     definitions:
       - schema:
