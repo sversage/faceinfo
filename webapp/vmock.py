@@ -69,19 +69,20 @@ def obtain_encoded_image(request):
     if the image cannot be obtained.
     '''
 
-    if 'image_url' not in request.args:
-        raise Error(387523, 'You must supply the `image_url` parameter')
-
-    image_url = request.args['image_url']
-
-    if image_url == 'body':
-        encoded_image_str = request.data
-    else:
+    if 'image_url' in request.args:
+        image_url = request.args['image_url']
         try:
             response = requests.get(image_url)
             encoded_image_str = response.content
         except:
             raise Error(2873, 'Invalid `image_url` parameter')
+
+    elif 'image_buf' in request.files:
+        image_buf = request.files['image_buf']  # <-- FileStorage object
+        encoded_image_str = image_buf.read()
+
+    else:
+        raise Error(35842, 'You must supply either `image_url` or `image_buf`')
 
     if encoded_image_str == '':
         raise Error(5724, 'You must supply a non-empty input image')
