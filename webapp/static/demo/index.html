@@ -46,15 +46,14 @@
                 var data = new FormData();
                 data.append('image_buf', file);
                 $.ajax({
-                    url: 'http://localhost:5000/vmock/process_photo?annotate_image=true',
+                    url: 'http://localhost:5000/v1.0.0/process_photo?annotate_image=true',
                     data: data,
                     cache: false,
                     contentType: false,
                     processData: false,
                     type: 'POST',
                     success: function(response_object) {
-                        var src = "data:image/jpeg;base64,";
-                        src += response_object.annotated_image;
+                        var src = response_object.annotated_image;
                         $('#annotated_image').attr('src', src);
                     },
                     error: function(xhr, textStatus, errorThrown) {
@@ -170,7 +169,7 @@
         </div>
 
         <div>
-            <img id="annotated_image">
+            <img id="annotated_image" width=700>
         </div>
 
     </body>
