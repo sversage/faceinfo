@@ -40,5 +40,4 @@ def after_request(response):
 
 import error
 import admin
-import vmock
 import v100
