@@ -46,7 +46,7 @@
                 var data = new FormData();
                 data.append('image_buf', file);
                 $.ajax({
-                    url: 'http://localhost:5000/v1.0.0/process_photo?annotate_image=true',
+                    url: '/v1.0.0/process_photo?annotate_image=true',
                     data: data,
                     cache: false,
                     contentType: false,
@@ -160,7 +160,7 @@
         </script>
 
         <div class="drop_area_outer">
-            <div class="drop_area_inner" id="drop_zone">Drop files here</div>
+            <div class="drop_area_inner" id="drop_zone">Drop images here</div>
         </div>
 
         <div>
